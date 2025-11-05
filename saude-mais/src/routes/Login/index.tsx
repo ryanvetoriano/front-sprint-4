@@ -5,8 +5,18 @@ import { useEffect } from "react";
 
 export default function Login() {
 
+  const URL_API = "http://localhost:8080/paciente"
+
   useEffect(() => {
       document.title = "Login";
+
+      async function GetApi() {
+        const response = await fetch(URL_API);
+        const data = await response.json();
+        console.log(data);
+      }
+
+      GetApi();
     }, []);
     
   const {
@@ -21,7 +31,7 @@ export default function Login() {
       console.log("Dados enviados:", data);
 
       // Busca usuário pelo CPF
-      const res = await fetch(`http://localhost:3001/users?cpf=${data.cpf}`);
+      const res = await fetch(`http://localhost:8080/paciente?cpf=${data.cpf}`);
 
       if (!res.ok) throw new Error("Erro na resposta da API");
 
