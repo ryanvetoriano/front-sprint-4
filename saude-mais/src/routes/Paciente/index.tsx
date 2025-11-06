@@ -3,28 +3,32 @@ import { useNavigate } from "react-router-dom";
 import type { User } from "../../types/tipouser";
 
 export default function Paciente() {
-
-  useEffect(() => {
-    document.title = "Perfil";
-  }, []);
-
   const [user, setUser] = useState<User | null>(null);
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState<Partial<User>>({});
   const navigate = useNavigate();
 
   useEffect(() => {
-    const usuarioId = localStorage.getItem("usuarioId");
-    if (!usuarioId) {
-      navigate("/");
+    document.title = "Perfil";
+
+    // Pega o CPF do usuário logado
+    const cpfUsuario = localStorage.getItem("cpfUsuario");
+    if (!cpfUsuario) {
+      navigate("/"); // se não estiver logado, redireciona para login
       return;
     }
 
-    fetch(`http://localhost:3001/users/${usuarioId}`)
+    // Busca paciente pelo CPF
+    fetch(`http://localhost:8080/paciente?cpf=${cpfUsuario}`)
       .then((res) => res.json())
-      .then((data) => {
-        setUser(data);
-        setForm(data);
+      .then((data: User[]) => {
+        if (data.length === 0) {
+          alert("Paciente não encontrado!");
+          navigate("/");
+          return;
+        }
+        setUser(data[0]);
+        setForm(data[0]);
       })
       .catch((err) => console.error(err));
   }, [navigate]);
@@ -39,7 +43,7 @@ export default function Paciente() {
     if (!user) return;
 
     try {
-      const res = await fetch(`http://localhost:3001/users/${user.id}`, {
+      const res = await fetch(`http://localhost:8080/paciente/${user.idPaciente}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -57,7 +61,8 @@ export default function Paciente() {
     }
   };
 
-  if (!user) return <p className="text-center mt-10 text-gray-600">Carregando...</p>;
+  if (!user)
+    return <p className="text-center mt-10 text-gray-600">Carregando...</p>;
 
   return (
     <main className="bg-blue-200 h-full w-[100vw] flex justify-center items-center">
@@ -69,8 +74,8 @@ export default function Paciente() {
         {editMode ? (
           <div className="flex flex-col gap-4">
             <input
-              name="name"
-              value={form.name || ""}
+              name="nome"
+              value={form.nome || ""}
               onChange={handleChange}
               placeholder="Nome"
               className="p-2 border border-gray-300 rounded"
@@ -84,14 +89,14 @@ export default function Paciente() {
             />
             <input
               type="date"
-              name="birthDate"
-              value={form.birthDate || ""}
+              name="dataNascimento"
+              value={form.dataNascimento || ""}
               onChange={handleChange}
               className="p-2 border border-gray-300 rounded"
             />
             <select
-              name="gender"
-              value={form.gender || ""}
+              name="sexo"
+              value={form.sexo || ""}
               onChange={handleChange}
               className="p-2 border border-gray-300 rounded"
             >
@@ -101,8 +106,8 @@ export default function Paciente() {
               <option value="Outro">Outro</option>
             </select>
             <input
-              name="phone"
-              value={form.phone || ""}
+              name="telefone"
+              value={form.telefone || ""}
               onChange={handleChange}
               placeholder="Telefone"
               className="p-2 border border-gray-300 rounded"
@@ -124,11 +129,11 @@ export default function Paciente() {
           </div>
         ) : (
           <div className="flex flex-col gap-3 text-gray-700">
-            <p><strong>Nome:</strong> {user.name}</p>
+            <p><strong>Nome:</strong> {user.nome}</p>
             <p><strong>CPF:</strong> {user.cpf}</p>
-            <p><strong>Data de Nascimento:</strong> {user.birthDate}</p>
-            <p><strong>Gênero:</strong> {user.gender}</p>
-            <p><strong>Telefone:</strong> {user.phone}</p>
+            <p><strong>Data de Nascimento:</strong> {user.dataNascimento}</p>
+            <p><strong>Sexo:</strong> {user.sexo}</p>
+            <p><strong>Telefone:</strong> {user.telefone}</p>
             <button
               onClick={() => setEditMode(true)}
               className="mt-4 bg-blue-400 text-white font-bold py-2 rounded hover:bg-blue-500 transition"
