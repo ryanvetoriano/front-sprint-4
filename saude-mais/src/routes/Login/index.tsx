@@ -4,11 +4,20 @@ import type { User } from "../../types/tipouser";
 import { useEffect } from "react";
 
 export default function Login() {
+  const URL_API = "http://localhost:8080/paciente";
 
   useEffect(() => {
-      document.title = "Login";
-    }, []);
-    
+    document.title = "Login";
+
+    async function GetApi() {
+      const response = await fetch(URL_API);
+      const data = await response.json();
+      console.log("Todos os pacientes:", data);
+    }
+
+    GetApi();
+  }, []);
+
   const {
     register,
     handleSubmit,
@@ -18,23 +27,25 @@ export default function Login() {
 
   const onSubmit = async (data: User) => {
     try {
-      console.log("Dados enviados:", data);
+      console.log("CPF enviado:", data.cpf);
 
-      // Busca usuário pelo CPF
-      const res = await fetch(`http://localhost:3001/users?cpf=${data.cpf}`);
+      // Busca paciente pelo CPF
+      const res = await fetch(`${URL_API}?cpf=${data.cpf}`);
 
       if (!res.ok) throw new Error("Erro na resposta da API");
 
-      const users: User[] = await res.json();
-      console.log("Usuários encontrados:", users);
+      const pacientes: User[] = await res.json();
 
-      if (users.length === 0) {
+      if (!Array.isArray(pacientes) || pacientes.length === 0) {
         alert("CPF não encontrado!");
         return;
       }
 
-      const user = users[0];
-      localStorage.setItem("usuarioId", String(user.id));
+      const paciente = pacientes[0]; // pega o primeiro paciente da lista
+      console.log("Paciente encontrado:", paciente);
+
+      // Salva o CPF do usuário logado
+      localStorage.setItem("cpfUsuario", paciente.cpf);
 
       navigate("/home");
     } catch (error) {

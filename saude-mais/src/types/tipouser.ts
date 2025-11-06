@@ -1,8 +1,8 @@
 export type User = {
-  id: number;        // ← aqui estava faltando o tipo
-  name: string;
+  idPaciente: number;        // ← aqui estava faltando o tipo
+  nome: string;
   cpf: string;
-  birthDate: string;
-  gender: string;
-  phone: string;
+  dataNascimento: string;
+  sexo: string;
+  telefone: string;
 };
