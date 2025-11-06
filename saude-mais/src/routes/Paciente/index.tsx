@@ -8,13 +8,22 @@ export default function Paciente() {
   const [form, setForm] = useState<Partial<User>>({});
   const navigate = useNavigate();
 
+  // Função para formatar a data para dd/mm/yyyy
+  const formatDateBR = (dateString: string) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   useEffect(() => {
     document.title = "Perfil";
 
-    // Pega o CPF do usuário logado
     const cpfUsuario = localStorage.getItem("cpfUsuario");
     if (!cpfUsuario) {
-      navigate("/"); // se não estiver logado, redireciona para login
+      navigate("/");
       return;
     }
 
@@ -39,11 +48,12 @@ export default function Paciente() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Atualizar informações do paciente via CPF
   const handleUpdate = async () => {
     if (!user) return;
 
     try {
-      const res = await fetch(`http://localhost:8080/paciente/${user.idPaciente}`, {
+      const res = await fetch(`http://localhost:8080/paciente/${user.cpf}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -58,6 +68,28 @@ export default function Paciente() {
     } catch (err) {
       console.error(err);
       alert("Erro ao atualizar informações");
+    }
+  };
+
+  // Deletar conta do paciente via CPF
+  const handleDelete = async () => {
+    if (!user) return;
+
+    if (!window.confirm("Tem certeza que deseja deletar sua conta?")) return;
+
+    try {
+      const res = await fetch(`http://localhost:8080/paciente/${user.cpf}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Erro ao deletar usuário");
+
+      alert("Conta deletada com sucesso!");
+      localStorage.removeItem("cpfUsuario");
+      navigate("/"); // volta para login
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao deletar a conta");
     }
   };
 
@@ -90,7 +122,7 @@ export default function Paciente() {
             <input
               type="date"
               name="dataNascimento"
-              value={form.dataNascimento || ""}
+              value={form.dataNascimento ? form.dataNascimento.split("T")[0] : ""}
               onChange={handleChange}
               className="p-2 border border-gray-300 rounded"
             />
@@ -131,15 +163,23 @@ export default function Paciente() {
           <div className="flex flex-col gap-3 text-gray-700">
             <p><strong>Nome:</strong> {user.nome}</p>
             <p><strong>CPF:</strong> {user.cpf}</p>
-            <p><strong>Data de Nascimento:</strong> {user.dataNascimento}</p>
+            <p><strong>Data de Nascimento:</strong> {formatDateBR(user.dataNascimento)}</p>
             <p><strong>Sexo:</strong> {user.sexo}</p>
             <p><strong>Telefone:</strong> {user.telefone}</p>
-            <button
-              onClick={() => setEditMode(true)}
-              className="mt-4 bg-blue-400 text-white font-bold py-2 rounded hover:bg-blue-500 transition"
-            >
-              Editar Informações
-            </button>
+            <div className="flex gap-4 mt-4">
+              <button
+                onClick={() => setEditMode(true)}
+                className="flex-1 bg-blue-400 text-white font-bold py-2 rounded hover:bg-blue-500 transition"
+              >
+                Editar Informações
+              </button>
+              <button
+                onClick={handleDelete}
+                className="flex-1 bg-red-500 text-white font-bold py-2 rounded hover:bg-red-600 transition"
+              >
+                Deletar Conta
+              </button>
+            </div>
           </div>
         )}
       </section>
