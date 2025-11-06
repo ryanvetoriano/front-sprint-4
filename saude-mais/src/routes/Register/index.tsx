@@ -4,21 +4,22 @@ import type { User } from "../../types/tipouser";
 import { useEffect } from "react";
 
 export default function Register() {
+  const navigate = useNavigate();
 
   useEffect(() => {
-      document.title = "Cadastro";
-    }, []);
-    
+    document.title = "Cadastro";
+  }, []);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<User>();
-  const navigate = useNavigate();
 
   const onSubmit = async (data: User) => {
     try {
-      const res = await fetch(`http://localhost:3001/users?cpf=${data.cpf}`);
+      // Verifica se CPF já existe
+      const res = await fetch(`http://localhost:8080/paciente?cpf=${data.cpf}`);
       const existingUsers: User[] = await res.json();
 
       if (existingUsers.length > 0) {
@@ -26,26 +27,29 @@ export default function Register() {
         return;
       }
 
-      const createRes = await fetch("http://localhost:3001/users", {
+      // Cria novo paciente
+      const createRes = await fetch("http://localhost:8080/paciente", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: data.name,
+          nome: data.nome,
           cpf: data.cpf,
-          birthDate: data.birthDate,
-          gender: data.gender,
-          phone: data.phone,
+          dataNascimento: data.dataNascimento,
+          sexo: data.sexo,
+          telefone: data.telefone,
         }),
       });
 
-      const newUser: User = await createRes.json();
-      localStorage.setItem("usuarioId", String(newUser.id));
+      if (!createRes.ok) throw new Error("Erro ao cadastrar paciente");
+
+      // Salva CPF no localStorage para login automático
+      localStorage.setItem("cpfUsuario", data.cpf);
 
       alert("Cadastro realizado com sucesso!");
       navigate("/home");
     } catch (error) {
       console.error(error);
-      alert("Erro ao cadastrar usuário.");
+      alert("Erro ao cadastrar paciente.");
     }
   };
 
@@ -64,10 +68,10 @@ export default function Register() {
             <input
               className="bg-blue-100 p-2 rounded text-blue-400 font-bold"
               placeholder="Digite seu nome"
-              {...register("name", { required: "Nome é obrigatório" })}
+              {...register("nome", { required: "Nome é obrigatório" })}
             />
-            {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            {errors.nome && (
+              <p className="text-red-500 text-sm">{errors.nome.message}</p>
             )}
           </label>
 
@@ -90,37 +94,37 @@ export default function Register() {
             )}
           </label>
 
-          {/* Data de Nascimento */}
+          {/* Data de nascimento */}
           <label className="flex flex-col text-blue-300 font-bold">
             Data de nascimento:
             <input
               type="date"
               className="bg-blue-100 p-2 rounded text-blue-400 font-bold"
-              {...register("birthDate", {
+              {...register("dataNascimento", {
                 required: "Data de nascimento é obrigatória",
               })}
             />
-            {errors.birthDate && (
+            {errors.dataNascimento && (
               <p className="text-red-500 text-sm">
-                {errors.birthDate.message}
+                {errors.dataNascimento.message}
               </p>
             )}
           </label>
 
-          {/* Gênero */}
+          {/* Sexo */}
           <label className="flex flex-col text-blue-300 font-bold">
-            Gênero:
+            Sexo:
             <select
               className="bg-blue-100 p-2 rounded text-blue-400 font-bold"
-              {...register("gender", { required: "Selecione um gênero" })}
+              {...register("sexo", { required: "Selecione um sexo" })}
             >
               <option value="">Selecione</option>
               <option value="Masculino">Masculino</option>
               <option value="Feminino">Feminino</option>
               <option value="Outro">Outro</option>
             </select>
-            {errors.gender && (
-              <p className="text-red-500 text-sm">{errors.gender.message}</p>
+            {errors.sexo && (
+              <p className="text-red-500 text-sm">{errors.sexo.message}</p>
             )}
           </label>
 
@@ -130,7 +134,7 @@ export default function Register() {
             <input
               className="bg-blue-100 p-2 rounded text-blue-400 font-bold"
               placeholder="Telefone"
-              {...register("phone", {
+              {...register("telefone", {
                 required: "Telefone é obrigatório",
                 pattern: {
                   value: /^\d{10,13}$/,
@@ -138,8 +142,8 @@ export default function Register() {
                 },
               })}
             />
-            {errors.phone && (
-              <p className="text-red-500 text-sm">{errors.phone.message}</p>
+            {errors.telefone && (
+              <p className="text-red-500 text-sm">{errors.telefone.message}</p>
             )}
           </label>
 
