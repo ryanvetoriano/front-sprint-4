@@ -42,11 +42,14 @@ export default function Register() {
 
       if (!createRes.ok) throw new Error("Erro ao cadastrar paciente");
 
-      // Salva CPF no localStorage para login automático
-      localStorage.setItem("cpfUsuario", data.cpf);
+      // Pega o paciente recém-criado para pegar o id
+      const pacienteCriado: User = await createRes.json();
+      localStorage.setItem("cpfUsuario", pacienteCriado.cpf);
+      localStorage.setItem("idPaciente", pacienteCriado.idPaciente.toString());
+
 
       alert("Cadastro realizado com sucesso!");
-      navigate("/home");
+      navigate("/");
     } catch (error) {
       console.error(error);
       alert("Erro ao cadastrar paciente.");
