@@ -4,6 +4,7 @@ import type { User } from "../../types/tipouser";
 import { useEffect } from "react";
 
 export default function Register() {
+  const URL_API = "http://localhost:8080/paciente";
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,34 +20,30 @@ export default function Register() {
   const onSubmit = async (data: User) => {
     try {
       // Verifica se CPF já existe
-      const res = await fetch(`http://localhost:8080/paciente?cpf=${data.cpf}`);
-      const existingUsers: User[] = await res.json();
+      const checkRes = await fetch(`${URL_API}?cpf=${data.cpf}`);
+      if (!checkRes.ok) throw new Error("Erro ao buscar CPF");
 
+      const existingUsers: User[] = await checkRes.json();
       if (existingUsers.length > 0) {
         alert("CPF já cadastrado!");
         return;
       }
 
       // Cria novo paciente
-      const createRes = await fetch("http://localhost:8080/paciente", {
+      const createRes = await fetch(URL_API, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nome: data.nome,
-          cpf: data.cpf,
-          dataNascimento: data.dataNascimento,
-          sexo: data.sexo,
-          telefone: data.telefone,
-        }),
+        body: JSON.stringify(data),
       });
 
       if (!createRes.ok) throw new Error("Erro ao cadastrar paciente");
 
-      // Pega o paciente recém-criado para pegar o id
-      const pacienteCriado: User = await createRes.json();
-      localStorage.setItem("cpfUsuario", pacienteCriado.cpf);
-      localStorage.setItem("idPaciente", pacienteCriado.idPaciente.toString());
+      // Busca o paciente recém-criado para pegar o ID
+      const pacienteRes = await fetch(`${URL_API}?cpf=${data.cpf}`);
+      const pacienteCriado: User[] = await pacienteRes.json();
 
+      localStorage.setItem("cpfUsuario", data.cpf);
+      localStorage.setItem("idPaciente", pacienteCriado[0].idPaciente.toString());
 
       alert("Cadastro realizado com sucesso!");
       navigate("/");

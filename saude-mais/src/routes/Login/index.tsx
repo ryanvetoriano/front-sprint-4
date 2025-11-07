@@ -19,20 +19,16 @@ export default function Login() {
 
   const onSubmit = async (data: User) => {
     try {
-      // Busca paciente pelo CPF
       const res = await fetch(`${URL_API}?cpf=${data.cpf}`);
       if (!res.ok) throw new Error("Erro na resposta da API");
 
       const pacientes: User[] = await res.json();
-      if (!Array.isArray(pacientes) || pacientes.length === 0) {
+      if (pacientes.length === 0) {
         alert("CPF não encontrado!");
         return;
       }
 
       const paciente = pacientes[0];
-      console.log("Paciente encontrado:", paciente);
-
-      // Salva CPF e id do usuário logado no localStorage
       localStorage.setItem("cpfUsuario", paciente.cpf);
       localStorage.setItem("idPaciente", paciente.idPaciente.toString());
 
