@@ -1,7 +1,11 @@
 export type Consulta = {
-  id?: number;
+  idConsulta?: number;
   data: string;
   hora: string;
   status: string;
-  motivo: string;
-}
+  motivoConsulta: string;
+  paciente?: {
+    idPaciente: number;
+    nome?: string;
+  };
+};
