@@ -1,13 +1,8 @@
-// pages/EditarConsultas.tsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import type { Consulta } from "../../types/tipoConsulta";
 
 export default function EditarConsultas() {
-  useEffect(() => {
-    document.title = "Editar Consulta";
-  }, []);
-
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -15,18 +10,32 @@ export default function EditarConsultas() {
     data: "",
     hora: "",
     status: "",
-    motivo: "",
+    motivoConsulta: "",
+    paciente: { idPaciente: Number(localStorage.getItem("idPaciente")) || 0 },
   });
 
   useEffect(() => {
+    document.title = id ? "Editar Consulta" : "Cadastrar Consulta";
+
+    const idPaciente = Number(localStorage.getItem("idPaciente"));
+    if (!idPaciente) return; // evita fetch sem idPaciente
+
     if (id) {
-      fetch(`http://localhost:3001/consultas/${id}`)
-        .then((res) => {
-          if (!res.ok) throw new Error("Consulta não encontrada");
-          return res.json();
+      fetch(`http://localhost:8080/consultas/${idPaciente}`)
+        .then(res => res.json())
+        .then((data: Consulta[]) => {
+          const consulta = data.find(c => c.idConsulta === Number(id));
+          if (consulta) {
+            setForm({
+              ...consulta,
+              hora: consulta.hora.slice(0, 5), // remove segundos
+              paciente: { idPaciente }
+            });
+          }
         })
-        .then((data) => setForm(data))
-        .catch((err) => console.error("Erro ao buscar consulta:", err));
+        .catch(err => console.error(err));
+    } else {
+      setForm(f => ({ ...f, paciente: { idPaciente } }));
     }
   }, [id]);
 
@@ -35,62 +44,69 @@ export default function EditarConsultas() {
   };
 
   const salvarConsulta = async () => {
-    if (!form.data || !form.hora || !form.status || !form.motivo) {
-      alert("Preencha todos os campos!");
+    const idPaciente = form.paciente?.idPaciente;
+    if (!idPaciente) {
+      alert("Paciente não identificado.");
       return;
     }
 
-    try {
-      const url = id
-        ? `http://localhost:3001/consultas/${id}`
-        : "http://localhost:3001/consultas";
-      const method = id ? "PUT" : "POST";
+    const url = id
+      ? `http://localhost:8080/consultas`
+      : `http://localhost:8080/consultas?idPaciente=${idPaciente}`;
+    const method = id ? "PUT" : "POST";
 
-      const resposta = await fetch(url, {
+    const body = { ...form, paciente: { idPaciente } };
+
+    try {
+      const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(body),
       });
 
-      if (resposta.ok) {
+      if (res.ok) {
         alert(id ? "Consulta atualizada!" : "Consulta cadastrada!");
         navigate("/consultas");
       } else {
         alert("Erro ao salvar consulta");
       }
     } catch (error) {
-      console.error("Erro ao salvar consulta:", error);
+      console.error(error);
+      alert("Erro ao salvar consulta");
     }
   };
 
   const excluirConsulta = async () => {
     if (!id) return;
 
-    const confirm = window.confirm(
-      "Tem certeza que deseja excluir esta consulta?"
-    );
-    if (!confirm) return;
+    const confirmDelete = window.confirm("Tem certeza que deseja excluir esta consulta?");
+    if (!confirmDelete) return;
+
+    const idPaciente = form.paciente?.idPaciente;
+    if (!idPaciente) return;
 
     try {
-      const resposta = await fetch(`http://localhost:3001/consultas/${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `http://localhost:8080/consultas/${id}?idPaciente=${idPaciente}`,
+        { method: "DELETE" }
+      );
 
-      if (resposta.ok) {
+      if (res.ok) {
         alert("Consulta excluída!");
         navigate("/consultas");
       } else {
         alert("Erro ao excluir consulta");
       }
-    } catch (err) {
-      console.error("Erro ao excluir consulta:", err);
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao excluir consulta");
     }
   };
 
   return (
     <main className="flex justify-center items-center bg-blue-200 w-[100vw] h-[85vh]">
       <form
-        onSubmit={(e) => {
+        onSubmit={e => {
           e.preventDefault();
           salvarConsulta();
         }}
@@ -129,7 +145,6 @@ export default function EditarConsultas() {
           <input
             type="text"
             name="status"
-            placeholder="Status"
             value={form.status}
             onChange={handleChange}
             className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
@@ -141,9 +156,8 @@ export default function EditarConsultas() {
           <span className="font-semibold text-gray-700">Motivo:</span>
           <input
             type="text"
-            name="motivo"
-            placeholder="Motivo"
-            value={form.motivo}
+            name="motivoConsulta"
+            value={form.motivoConsulta}
             onChange={handleChange}
             className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
             required

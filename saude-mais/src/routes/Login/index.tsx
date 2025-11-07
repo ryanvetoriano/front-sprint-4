@@ -5,17 +5,10 @@ import { useEffect } from "react";
 
 export default function Login() {
   const URL_API = "http://localhost:8080/paciente";
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Login";
-
-    async function GetApi() {
-      const response = await fetch(URL_API);
-      const data = await response.json();
-      console.log("Todos os pacientes:", data);
-    }
-
-    GetApi();
   }, []);
 
   const {
@@ -23,29 +16,25 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm<User>();
-  const navigate = useNavigate();
 
   const onSubmit = async (data: User) => {
     try {
-      console.log("CPF enviado:", data.cpf);
-
       // Busca paciente pelo CPF
       const res = await fetch(`${URL_API}?cpf=${data.cpf}`);
-
       if (!res.ok) throw new Error("Erro na resposta da API");
 
       const pacientes: User[] = await res.json();
-
       if (!Array.isArray(pacientes) || pacientes.length === 0) {
         alert("CPF não encontrado!");
         return;
       }
 
-      const paciente = pacientes[0]; // pega o primeiro paciente da lista
+      const paciente = pacientes[0];
       console.log("Paciente encontrado:", paciente);
 
-      // Salva o CPF do usuário logado
+      // Salva CPF e id do usuário logado no localStorage
       localStorage.setItem("cpfUsuario", paciente.cpf);
+      localStorage.setItem("idPaciente", paciente.idPaciente.toString());
 
       navigate("/home");
     } catch (error) {
@@ -63,7 +52,6 @@ export default function Login() {
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-4 w-full max-w-md"
         >
-          {/* CPF */}
           <label className="flex flex-col text-blue-300 font-bold">
             CPF:
             <input
@@ -82,7 +70,6 @@ export default function Login() {
             )}
           </label>
 
-          {/* Botão login */}
           <button
             type="submit"
             className="bg-blue-400 text-white font-bold py-2 rounded hover:bg-blue-500 transition"
@@ -91,7 +78,6 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Ir para cadastro */}
         <button
           onClick={() => navigate("/register")}
           className="mt-4 text-blue-400 hover:underline"
