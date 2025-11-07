@@ -1,22 +1,23 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Consulta } from "../../types/tipoConsulta";
-import Botao from "../../components/BotaoProps/BotaoProps";
 import ConsultaProps from "../../components/ConsultaProps/ConsultaProps";
+import Botao from "../../components/BotaoProps/BotaoProps";
 
-export default function Consulta() {
+export default function Consultas() {
   const [consultas, setConsultas] = useState<Consulta[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Consultas";
-  }, []);
 
-  useEffect(() => {
-    fetch("http://localhost:3001/consultas")
-      .then((res) => res.json())
-      .then((data) => setConsultas(data))
-      .catch((err) => console.error("Erro ao buscar consultas:", err));
+    const idPaciente = localStorage.getItem("idPaciente");
+    if (!idPaciente) return;
+
+    fetch(`http://localhost:8080/consultas/${idPaciente}`)
+      .then(res => res.json())
+      .then(data => setConsultas(data))
+      .catch(err => console.error("Erro ao buscar consultas:", err));
   }, []);
 
   return (
@@ -29,18 +30,16 @@ export default function Consulta() {
             <p className="text-blue-400 font-semibold mb-4 bg-blue-100 p-1 rounded">
               Nenhuma consulta cadastrada.
             </p>
-            <button
-              className="bg-blue-400 text-white font-bold py-2 px-1 rounded hover:bg-blue-500 transition"
+            <Botao
+              texto="Cadastrar Primeira Consulta"
               onClick={() => navigate("/editar/consultas")}
-            >
-              Cadastrar Primeira Consulta
-            </button>
+            />
           </div>
         ) : (
           <div className="flex flex-col items-center w-full">
             <ul className="w-full mb-6">
               {consultas.map((c) => (
-                <ConsultaProps key={c.id} consulta={c} />
+                <ConsultaProps key={c.idConsulta} consulta={c} />
               ))}
             </ul>
 
