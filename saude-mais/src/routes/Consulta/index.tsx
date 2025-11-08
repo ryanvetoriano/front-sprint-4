@@ -21,8 +21,8 @@ export default function Consultas() {
   }, []);
 
   return (
-    <main className="flex bg-blue-200 w-[100vw] h-[85vh] justify-center items-center">
-      <div className="flex bg-gray-50 rounded w-[60vw] p-10 flex-col items-center">
+    <main className="flex bg-blue-200 w-full min-h-screen justify-center items-center p-4">
+      <div className="flex bg-gray-50 rounded w-full max-w-4xl max-h-[85vh] overflow-y-auto p-6 md:p-10 flex-col items-center shadow-lg">
         <h1 className="text-blue-400 font-bold text-2xl mb-6">Consultas</h1>
 
         {consultas.length === 0 ? (

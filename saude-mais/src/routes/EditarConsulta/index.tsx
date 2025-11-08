@@ -18,7 +18,7 @@ export default function EditarConsultas() {
     document.title = id ? "Editar Consulta" : "Cadastrar Consulta";
 
     const idPaciente = Number(localStorage.getItem("idPaciente"));
-    if (!idPaciente) return; // evita fetch sem idPaciente
+    if (!idPaciente) return;
 
     if (id) {
       fetch(`http://localhost:8080/consultas/${idPaciente}`)
@@ -28,8 +28,8 @@ export default function EditarConsultas() {
           if (consulta) {
             setForm({
               ...consulta,
-              hora: consulta.hora.slice(0, 5), // remove segundos
-              paciente: { idPaciente }
+              hora: consulta.hora.slice(0, 5),
+              paciente: { idPaciente },
             });
           }
         })
@@ -40,11 +40,11 @@ export default function EditarConsultas() {
   }, [id]);
 
   const handleChange = (
-  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-) => {
-  const { name, value } = e.target;
-  setForm(prev => ({ ...prev, [name]: value }));
-};
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
 
   const salvarConsulta = async () => {
     const idPaciente = form.paciente?.idPaciente;
@@ -107,87 +107,90 @@ export default function EditarConsultas() {
   };
 
   return (
-    <main className="flex justify-center items-center bg-blue-200 w-[100vw] h-[85vh]">
-      <form
-        onSubmit={e => {
-          e.preventDefault();
-          salvarConsulta();
-        }}
-        className="bg-gray-50 p-8 rounded-lg shadow-md flex flex-col gap-4 w-full max-w-md"
-      >
-        <h1 className="text-blue-300 text-xl font-bold mb-4">
-          {id ? "Editar Consulta" : "Cadastrar Consulta"}
-        </h1>
-
-        <label className="flex flex-col">
-          <span className="font-semibold text-gray-700">Data:</span>
-          <input
-            type="date"
-            name="data"
-            value={form.data}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-        </label>
-
-        <label className="flex flex-col">
-          <span className="font-semibold text-gray-700">Hora:</span>
-          <input
-            type="time"
-            name="hora"
-            value={form.hora}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-        </label>
-
-        <label className="flex flex-col">
-          <span className="font-semibold text-gray-700">Status:</span>
-          <select
-            name="status"
-            value={form.status}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
-            required
-          >
-            <option value="">Selecione o status</option>
-            <option value="Agendado">Agendado</option>
-            <option value="Realizado">Realizado</option>
-            <option value="Cancelado">Cancelado</option>
-          </select>
-        </label>
-
-        <label className="flex flex-col">
-          <span className="font-semibold text-gray-700">Motivo:</span>
-          <input
-            type="text"
-            name="motivoConsulta"
-            value={form.motivoConsulta}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-        </label>
-
-        <button
-          type="submit"
-          className="bg-blue-400 text-white font-bold py-2 rounded hover:bg-blue-500 transition"
+    <main className="flex justify-center items-start md:items-center bg-blue-200 w-full min-h-[85vh] p-4">
+      <div className="w-full max-w-md h-full flex justify-center">
+        <form
+          onSubmit={e => {
+            e.preventDefault();
+            salvarConsulta();
+          }}
+          className="bg-gray-50 p-6 sm:p-8 rounded-lg shadow-md flex flex-col gap-4 w-full overflow-y-auto max-h-[90vh]"
         >
-          {id ? "Atualizar" : "Cadastrar"}
-        </button>
+          <h1 className="text-blue-300 text-lg sm:text-xl font-bold mb-4 text-center">
+            {id ? "Editar Consulta" : "Cadastrar Consulta"}
+          </h1>
 
-        {id && (
+          {/* Campos de formulário */}
+          <label className="flex flex-col">
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Data:</span>
+            <input
+              type="date"
+              name="data"
+              value={form.data}
+              onChange={handleChange}
+              className="mt-1 p-2 text-sm sm:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+          </label>
+
+          <label className="flex flex-col">
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Hora:</span>
+            <input
+              type="time"
+              name="hora"
+              value={form.hora}
+              onChange={handleChange}
+              className="mt-1 p-2 text-sm sm:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+          </label>
+
+          <label className="flex flex-col">
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Status:</span>
+            <select
+              name="status"
+              value={form.status}
+              onChange={handleChange}
+              className="mt-1 p-2 text-sm sm:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
+              required
+            >
+              <option value="">Selecione o status</option>
+              <option value="Agendado">Agendado</option>
+              <option value="Realizado">Realizado</option>
+              <option value="Cancelado">Cancelado</option>
+            </select>
+          </label>
+
+          <label className="flex flex-col">
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Motivo:</span>
+            <input
+              type="text"
+              name="motivoConsulta"
+              value={form.motivoConsulta}
+              onChange={handleChange}
+              className="mt-1 p-2 text-sm sm:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+          </label>
+
           <button
-            type="button"
-            onClick={excluirConsulta}
-            className="bg-red-500 text-white font-bold py-2 rounded hover:bg-red-600 transition"
+            type="submit"
+            className="bg-blue-400 text-white font-bold py-2 rounded hover:bg-blue-500 transition text-sm sm:text-base"
           >
-            Excluir Consulta
+            {id ? "Atualizar" : "Cadastrar"}
           </button>
-        )}
-      </form>
+
+          {id && (
+            <button
+              type="button"
+              onClick={excluirConsulta}
+              className="bg-red-500 text-white font-bold py-2 rounded hover:bg-red-600 transition text-sm sm:text-base"
+            >
+              Excluir Consulta
+            </button>
+          )}
+        </form>
+      </div>
     </main>
   );
 }

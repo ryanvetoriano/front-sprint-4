@@ -108,101 +108,101 @@ export default function EditarExame() {
   };
 
   return (
-    <main className="flex justify-center items-center bg-blue-200 w-[100vw] h-[85vh]">
-      <form
-        onSubmit={e => {
-          e.preventDefault();
-          salvarExame();
-        }}
-        className="bg-gray-50 p-8 rounded-lg shadow-md flex flex-col gap-4 w-full max-w-md"
-      >
-        <h1 className="text-blue-400 text-xl font-bold mb-4">
-          {id ? "Editar Exame" : "Cadastrar Exame"}
-        </h1>
-
-        <label className="flex flex-col">
-          <span className="font-semibold text-gray-700">Data:</span>
-          <input
-            type="date"
-            name="data"
-            value={form.data}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-        </label>
-
-        <label className="flex flex-col">
-          <span className="font-semibold text-gray-700">Hora:</span>
-          <input
-            type="time"
-            name="hora"
-            value={form.hora}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-        </label>
-
-        <label className="flex flex-col">
-          <span className="font-semibold text-gray-700">Status:</span>
-          <select
-            name="status"
-            value={form.status}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
-            required
-          >
-            <option value="">Selecione o status</option>
-            <option value="Agendado">Agendado</option>
-            <option value="Realizado">Realizado</option>
-            <option value="Cancelado">Cancelado</option>
-          </select>
-        </label>
-
-        <label className="flex flex-col">
-          <span className="font-semibold text-gray-700">Tipo do Exame:</span>
-          <input
-            type="text"
-            name="tipoExame"
-            value={form.tipoExame}
-            onChange={handleChange}
-            placeholder="Ex: Hemograma, Raio-X..."
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-        </label>
-
-        <label className="flex flex-col">
-          <span className="font-semibold text-gray-700">Local:</span>
-          <input
-            type="text"
-            name="local"
-            value={form.local}
-            onChange={handleChange}
-            placeholder="Ex: Laboratório Central"
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-        </label>
-
-        <button
-          type="submit"
-          className="bg-blue-400 text-white font-bold py-2 rounded hover:bg-blue-500 transition"
+    <main className="flex justify-center items-start md:items-center bg-blue-200 w-full min-h-[85vh] p-4">
+      <div className="w-full max-w-md h-full flex justify-center">
+        <form
+          onSubmit={e => { e.preventDefault(); salvarExame(); }}
+          className="bg-gray-50 p-6 sm:p-8 rounded-lg shadow-md flex flex-col gap-4 w-full overflow-y-auto max-h-[90vh]"
         >
-          {id ? "Atualizar" : "Cadastrar"}
-        </button>
+          <h1 className="text-blue-400 text-lg sm:text-xl font-bold mb-4 text-center">
+            {id ? "Editar Exame" : "Cadastrar Exame"}
+          </h1>
 
-        {id && (
+          {/* Campos do formulário */}
+          <label className="flex flex-col">
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Data:</span>
+            <input
+              type="date"
+              name="data"
+              value={form.data}
+              onChange={handleChange}
+              className="mt-1 p-2 text-sm sm:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+          </label>
+
+          <label className="flex flex-col">
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Hora:</span>
+            <input
+              type="time"
+              name="hora"
+              value={form.hora}
+              onChange={handleChange}
+              className="mt-1 p-2 text-sm sm:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+          </label>
+
+          <label className="flex flex-col">
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Status:</span>
+            <select
+              name="status"
+              value={form.status}
+              onChange={handleChange}
+              className="mt-1 p-2 text-sm sm:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
+              required
+            >
+              <option value="">Selecione o status</option>
+              <option value="Agendado">Agendado</option>
+              <option value="Realizado">Realizado</option>
+              <option value="Cancelado">Cancelado</option>
+            </select>
+          </label>
+
+          <label className="flex flex-col">
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Tipo do Exame:</span>
+            <input
+              type="text"
+              name="tipoExame"
+              value={form.tipoExame}
+              onChange={handleChange}
+              placeholder="Ex: Hemograma, Raio-X..."
+              className="mt-1 p-2 text-sm sm:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+          </label>
+
+          <label className="flex flex-col">
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Local:</span>
+            <input
+              type="text"
+              name="local"
+              value={form.local}
+              onChange={handleChange}
+              placeholder="Ex: Laboratório Central"
+              className="mt-1 p-2 text-sm sm:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+          </label>
+
           <button
-            type="button"
-            onClick={excluirExame}
-            className="bg-red-500 text-white font-bold py-2 rounded hover:bg-red-600 transition"
+            type="submit"
+            className="bg-blue-400 text-white font-bold py-2 rounded hover:bg-blue-500 transition text-sm sm:text-base"
           >
-            Excluir Exame
+            {id ? "Atualizar" : "Cadastrar"}
           </button>
-        )}
-      </form>
+
+          {id && (
+            <button
+              type="button"
+              onClick={excluirExame}
+              className="bg-red-500 text-white font-bold py-2 rounded hover:bg-red-600 transition text-sm sm:text-base"
+            >
+              Excluir Exame
+            </button>
+          )}
+        </form>
+      </div>
     </main>
   );
 }

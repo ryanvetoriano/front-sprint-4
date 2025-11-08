@@ -98,7 +98,7 @@ export default function Paciente() {
 
   return (
     <main className="bg-blue-200 h-full w-[100vw] flex justify-center items-center">
-      <section className="bg-gray-50 p-8 rounded-lg shadow-md w-full max-w-md">
+      <section className="bg-gray-50 p-8 rounded-lg shadow-md w-[90vw] max-w-md">
         <h1 className="text-2xl font-bold text-blue-300 mb-6 text-center">
           Perfil do Paciente
         </h1>

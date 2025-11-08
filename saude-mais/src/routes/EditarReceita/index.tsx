@@ -107,95 +107,95 @@ export default function EditarReceitas() {
   };
 
   return (
-    <main className="flex justify-center items-center bg-blue-200 w-[100vw] h-[85vh]">
-      <form
-        onSubmit={e => {
-          e.preventDefault();
-          salvarReceita();
-        }}
-        className="bg-gray-50 p-8 rounded-lg shadow-md flex flex-col gap-4 w-full max-w-md"
-      >
-        <h1 className="text-blue-300 text-xl font-bold mb-4">
-          {id ? "Editar Receita" : "Cadastrar Receita"}
-        </h1>
-
-        <label className="flex flex-col">
-          <span className="font-semibold text-gray-700">Data de Emissão:</span>
-          <input
-            type="date"
-            name="dataEmissao"
-            value={form.dataEmissao}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-        </label>
-
-        <label className="flex flex-col">
-          <span className="font-semibold text-gray-700">Medicamento:</span>
-          <input
-            type="text"
-            name="medicamento"
-            value={form.medicamento}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-        </label>
-
-        <label className="flex flex-col">
-          <span className="font-semibold text-gray-700">Dosagem:</span>
-          <input
-            type="text"
-            name="dosagem"
-            value={form.dosagem}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-        </label>
-
-        <label className="flex flex-col">
-          <span className="font-semibold text-gray-700">Frequência:</span>
-          <input
-            type="text"
-            name="frequencia"
-            value={form.frequencia}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-        </label>
-
-        <label className="flex flex-col">
-          <span className="font-semibold text-gray-700">Duração:</span>
-          <input
-            type="text"
-            name="duracao"
-            value={form.duracao}
-            onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-        </label>
-
-        <button
-          type="submit"
-          className="bg-blue-400 text-white font-bold py-2 rounded hover:bg-blue-500 transition"
+    <main className="flex justify-center items-start md:items-center bg-blue-200 w-full min-h-[85vh] p-4">
+      <div className="w-full max-w-md h-full flex justify-center">
+        <form
+          onSubmit={e => { e.preventDefault(); salvarReceita(); }}
+          className="bg-gray-50 p-6 sm:p-8 rounded-lg shadow-md flex flex-col gap-4 w-full overflow-y-auto max-h-[90vh]"
         >
-          {id ? "Atualizar" : "Cadastrar"}
-        </button>
+          <h1 className="text-blue-300 text-lg sm:text-xl font-bold mb-4 text-center">
+            {id ? "Editar Receita" : "Cadastrar Receita"}
+          </h1>
 
-        {id && (
+          <label className="flex flex-col">
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Data de Emissão:</span>
+            <input
+              type="date"
+              name="dataEmissao"
+              value={form.dataEmissao}
+              onChange={handleChange}
+              className="mt-1 p-2 text-sm sm:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+          </label>
+
+          <label className="flex flex-col">
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Medicamento:</span>
+            <input
+              type="text"
+              name="medicamento"
+              value={form.medicamento}
+              onChange={handleChange}
+              className="mt-1 p-2 text-sm sm:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+          </label>
+
+          <label className="flex flex-col">
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Dosagem:</span>
+            <input
+              type="text"
+              name="dosagem"
+              value={form.dosagem}
+              onChange={handleChange}
+              className="mt-1 p-2 text-sm sm:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+          </label>
+
+          <label className="flex flex-col">
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Frequência:</span>
+            <input
+              type="text"
+              name="frequencia"
+              value={form.frequencia}
+              onChange={handleChange}
+              className="mt-1 p-2 text-sm sm:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+          </label>
+
+          <label className="flex flex-col">
+            <span className="font-semibold text-gray-700 text-sm sm:text-base">Duração:</span>
+            <input
+              type="text"
+              name="duracao"
+              value={form.duracao}
+              onChange={handleChange}
+              className="mt-1 p-2 text-sm sm:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              required
+            />
+          </label>
+
           <button
-            type="button"
-            onClick={excluirReceita}
-            className="bg-red-500 text-white font-bold py-2 rounded hover:bg-red-600 transition"
+            type="submit"
+            className="bg-blue-400 text-white font-bold py-2 rounded hover:bg-blue-500 transition text-sm sm:text-base"
           >
-            Excluir Receita
+            {id ? "Atualizar" : "Cadastrar"}
           </button>
-        )}
-      </form>
+
+          {id && (
+            <button
+              type="button"
+              onClick={excluirReceita}
+              className="bg-red-500 text-white font-bold py-2 rounded hover:bg-red-600 transition text-sm sm:text-base"
+            >
+              Excluir Receita
+            </button>
+          )}
+        </form>
+      </div>
     </main>
+
   );
 }
