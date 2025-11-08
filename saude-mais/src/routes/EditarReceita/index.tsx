@@ -1,14 +1,8 @@
-// pages/EditarReceita.tsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import type { Receita } from "../../types/tipoReceita";
 
-export default function EditarReceita() {
-
-  useEffect(() => {
-    document.title = "Editar Receita Médica";
-  }, []);
-
+export default function EditarReceitas() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -18,87 +12,104 @@ export default function EditarReceita() {
     dosagem: "",
     frequencia: "",
     duracao: "",
+    paciente: { idPaciente: Number(localStorage.getItem("idPaciente")) || 0 },
   });
 
   useEffect(() => {
+    document.title = id ? "Editar Receita" : "Cadastrar Receita";
+
+    const idPaciente = Number(localStorage.getItem("idPaciente"));
+    if (!idPaciente) return;
+
     if (id) {
-      fetch(`http://localhost:3001/receitas/${id}`)
-        .then((res) => {
-          if (!res.ok) throw new Error("Receita não encontrada");
-          return res.json();
+      fetch(`http://localhost:8080/receitas/${idPaciente}`)
+        .then(res => res.json())
+        .then((data: Receita[]) => {
+          const receita = data.find(r => r.idReceita === Number(id));
+          if (receita) {
+            setForm({
+              ...receita,
+              paciente: { idPaciente },
+            });
+          }
         })
-        .then((data) => setForm(data))
-        .catch((err) => console.error("Erro ao buscar receita:", err));
+        .catch(err => console.error(err));
+    } else {
+      setForm(f => ({ ...f, paciente: { idPaciente } }));
     }
   }, [id]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   const salvarReceita = async () => {
-    if (
-      !form.dataEmissao ||
-      !form.medicamento ||
-      !form.dosagem ||
-      !form.frequencia ||
-      !form.duracao
-    ) {
-      alert("Preencha todos os campos!");
+    const idPaciente = form.paciente?.idPaciente;
+    if (!idPaciente) {
+      alert("Paciente não identificado.");
       return;
     }
 
-    try {
-      const url = id
-        ? `http://localhost:3001/receitas/${id}`
-        : "http://localhost:3001/receitas";
-      const method = id ? "PUT" : "POST";
+    const url = id
+      ? `http://localhost:8080/receitas`
+      : `http://localhost:8080/receitas?idPaciente=${idPaciente}`;
+    const method = id ? "PUT" : "POST";
 
-      const resposta = await fetch(url, {
+    const body = { ...form, paciente: { idPaciente } };
+
+    try {
+      const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(body),
       });
 
-      if (resposta.ok) {
+      if (res.ok) {
         alert(id ? "Receita atualizada!" : "Receita cadastrada!");
         navigate("/receitas");
       } else {
         alert("Erro ao salvar receita");
       }
     } catch (error) {
-      console.error("Erro ao salvar a receita:", error);
+      console.error(error);
+      alert("Erro ao salvar receita");
     }
   };
 
   const excluirReceita = async () => {
     if (!id) return;
 
-    const confirm = window.confirm(
-      "Tem certeza que deseja excluir esta receita?"
-    );
-    if (!confirm) return;
+    const confirmDelete = window.confirm("Tem certeza que deseja excluir esta receita?");
+    if (!confirmDelete) return;
+
+    const idPaciente = form.paciente?.idPaciente;
+    if (!idPaciente) return;
 
     try {
-      const resposta = await fetch(`http://localhost:3001/receitas/${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `http://localhost:8080/receitas/${id}?idPaciente=${idPaciente}`,
+        { method: "DELETE" }
+      );
 
-      if (resposta.ok) {
+      if (res.ok) {
         alert("Receita excluída!");
         navigate("/receitas");
       } else {
         alert("Erro ao excluir receita");
       }
-    } catch (err) {
-      console.error("Erro ao excluir receita:", err);
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao excluir receita");
     }
   };
 
   return (
     <main className="flex justify-center items-center bg-blue-200 w-[100vw] h-[85vh]">
       <form
-        onSubmit={(e) => {
+        onSubmit={e => {
           e.preventDefault();
           salvarReceita();
         }}
