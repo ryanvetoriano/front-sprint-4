@@ -14,7 +14,7 @@ export default function Exames() {
     const idPaciente = localStorage.getItem("idPaciente");
     if (!idPaciente) return;
 
-    fetch(`http://localhost:8080/exames/${idPaciente}`)
+    fetch(`https://java-sprint-4-latest.onrender.com/exames/${idPaciente}`)
       .then(res => res.json())
       .then(data => setExames(data))
       .catch(err => console.error("Erro ao buscar exames:", err));

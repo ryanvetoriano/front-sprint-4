@@ -21,7 +21,7 @@ export default function EditarConsultas() {
     if (!idPaciente) return;
 
     if (id) {
-      fetch(`http://localhost:8080/consultas/${idPaciente}`)
+      fetch(`https://java-sprint-4-latest.onrender.com/consultas/${idPaciente}`)
         .then(res => res.json())
         .then((data: Consulta[]) => {
           const consulta = data.find(c => c.idConsulta === Number(id));
@@ -54,8 +54,8 @@ export default function EditarConsultas() {
     }
 
     const url = id
-      ? `http://localhost:8080/consultas`
-      : `http://localhost:8080/consultas?idPaciente=${idPaciente}`;
+      ? `https://java-sprint-4-latest.onrender.com/consultas`
+      : `https://java-sprint-4-latest.onrender.com/consultas?idPaciente=${idPaciente}`;
     const method = id ? "PUT" : "POST";
 
     const body = { ...form, paciente: { idPaciente } };
@@ -90,7 +90,7 @@ export default function EditarConsultas() {
 
     try {
       const res = await fetch(
-        `http://localhost:8080/consultas/${id}?idPaciente=${idPaciente}`,
+        `https://java-sprint-4-latest.onrender.com/consultas/${id}?idPaciente=${idPaciente}`,
         { method: "DELETE" }
       );
 

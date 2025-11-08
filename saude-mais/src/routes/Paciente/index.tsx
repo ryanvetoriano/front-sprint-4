@@ -28,7 +28,7 @@ export default function Paciente() {
     }
 
     // Busca paciente pelo CPF
-    fetch(`http://localhost:8080/paciente?cpf=${cpfUsuario}`)
+    fetch(`https://java-sprint-4-latest.onrender.com/paciente?cpf=${cpfUsuario}`)
       .then((res) => res.json())
       .then((data: User[]) => {
         if (data.length === 0) {
@@ -53,7 +53,7 @@ export default function Paciente() {
     if (!user) return;
 
     try {
-      const res = await fetch(`http://localhost:8080/paciente/${user.cpf}`, {
+      const res = await fetch(`https://java-sprint-4-latest.onrender.com/paciente/${user.cpf}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -78,7 +78,7 @@ export default function Paciente() {
     if (!window.confirm("Tem certeza que deseja deletar sua conta?")) return;
 
     try {
-      const res = await fetch(`http://localhost:8080/paciente/${user.cpf}`, {
+      const res = await fetch(`https://java-sprint-4-latest.onrender.com/paciente/${user.cpf}`, {
         method: "DELETE",
       });
 

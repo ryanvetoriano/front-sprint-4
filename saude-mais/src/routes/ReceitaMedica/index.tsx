@@ -14,7 +14,7 @@ export default function Receitas() {
     const idPaciente = localStorage.getItem("idPaciente");
     if (!idPaciente) return;
 
-    fetch(`http://localhost:8080/receitas/${idPaciente}`)
+    fetch(`https://java-sprint-4-latest.onrender.com/receitas/${idPaciente}`)
       .then(res => res.json())
       .then(data => setReceitas(data))
       .catch(err => console.error("Erro ao buscar receitas:", err));

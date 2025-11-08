@@ -22,7 +22,7 @@ export default function EditarReceitas() {
     if (!idPaciente) return;
 
     if (id) {
-      fetch(`http://localhost:8080/receitas/${idPaciente}`)
+      fetch(`https://java-sprint-4-latest.onrender.com/receitas/${idPaciente}`)
         .then(res => res.json())
         .then((data: Receita[]) => {
           const receita = data.find(r => r.idReceita === Number(id));
@@ -54,8 +54,8 @@ export default function EditarReceitas() {
     }
 
     const url = id
-      ? `http://localhost:8080/receitas`
-      : `http://localhost:8080/receitas?idPaciente=${idPaciente}`;
+      ? `https://java-sprint-4-latest.onrender.com/receitas`
+      : `https://java-sprint-4-latest.onrender.com/receitas?idPaciente=${idPaciente}`;
     const method = id ? "PUT" : "POST";
 
     const body = { ...form, paciente: { idPaciente } };
@@ -90,7 +90,7 @@ export default function EditarReceitas() {
 
     try {
       const res = await fetch(
-        `http://localhost:8080/receitas/${id}?idPaciente=${idPaciente}`,
+        `https://java-sprint-4-latest.onrender.com/receitas/${id}?idPaciente=${idPaciente}`,
         { method: "DELETE" }
       );
 

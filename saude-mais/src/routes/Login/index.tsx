@@ -4,7 +4,7 @@ import type { User } from "../../types/tipouser";
 import { useEffect } from "react";
 
 export default function Login() {
-  const URL_API = "http://localhost:8080/paciente";
+  const URL_API = "https://java-sprint-4-latest.onrender.com/paciente";
   const navigate = useNavigate();
 
   useEffect(() => {

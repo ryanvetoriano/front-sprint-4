@@ -14,7 +14,7 @@ export default function Consultas() {
     const idPaciente = localStorage.getItem("idPaciente");
     if (!idPaciente) return;
 
-    fetch(`http://localhost:8080/consultas/${idPaciente}`)
+    fetch(`https://java-sprint-4-latest.onrender.com/consultas/${idPaciente}`)
       .then(res => res.json())
       .then(data => setConsultas(data))
       .catch(err => console.error("Erro ao buscar consultas:", err));

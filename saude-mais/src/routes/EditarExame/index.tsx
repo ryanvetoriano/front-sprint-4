@@ -22,7 +22,7 @@ export default function EditarExame() {
     if (!idPaciente) return;
 
     if (id) {
-      fetch(`http://localhost:8080/exames/${idPaciente}`)
+      fetch(`https://java-sprint-4-latest.onrender.com/exames/${idPaciente}`)
         .then(res => res.json())
         .then((data: Exame[]) => {
           const exame = data.find(e => e.idExame === Number(id));
@@ -55,8 +55,8 @@ export default function EditarExame() {
     }
 
     const url = id
-      ? `http://localhost:8080/exames`
-      : `http://localhost:8080/exames?idPaciente=${idPaciente}`;
+      ? `https://java-sprint-4-latest.onrender.com/exames`
+      : `https://java-sprint-4-latest.onrender.com/exames?idPaciente=${idPaciente}`;
     const method = id ? "PUT" : "POST";
 
     const body = { ...form, paciente: { idPaciente } };
@@ -91,7 +91,7 @@ export default function EditarExame() {
 
     try {
       const res = await fetch(
-        `http://localhost:8080/exames/${id}?idPaciente=${idPaciente}`,
+        `https://java-sprint-4-latest.onrender.com/exames/${id}?idPaciente=${idPaciente}`,
         { method: "DELETE" }
       );
 
