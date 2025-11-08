@@ -39,9 +39,12 @@ export default function EditarConsultas() {
     }
   }, [id]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = (
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+) => {
+  const { name, value } = e.target;
+  setForm(prev => ({ ...prev, [name]: value }));
+};
 
   const salvarConsulta = async () => {
     const idPaciente = form.paciente?.idPaciente;
@@ -142,14 +145,18 @@ export default function EditarConsultas() {
 
         <label className="flex flex-col">
           <span className="font-semibold text-gray-700">Status:</span>
-          <input
-            type="text"
+          <select
             name="status"
             value={form.status}
             onChange={handleChange}
-            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="mt-1 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
             required
-          />
+          >
+            <option value="">Selecione o status</option>
+            <option value="Agendado">Agendado</option>
+            <option value="Realizado">Realizado</option>
+            <option value="Cancelado">Cancelado</option>
+          </select>
         </label>
 
         <label className="flex flex-col">
