@@ -1,23 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Exame } from "../../types/tipoExame";
-import ExameProps from "../../components/ExameProps/ExameProps";
 import Botao from "../../components/BotaoProps/BotaoProps";
 
-export default function Exame() {
-
-  useEffect(() => {
-    document.title = "Exames";
-  }, []);
-
+export default function Exames() {
   const [exames, setExames] = useState<Exame[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3001/exames")
-      .then((res) => res.json())
-      .then((data) => setExames(data))
-      .catch((err) => console.error("Erro ao buscar exames:", err));
+    document.title = "Exames";
+
+    const idPaciente = localStorage.getItem("idPaciente");
+    if (!idPaciente) return;
+
+    fetch(`http://localhost:8080/exames/${idPaciente}`)
+      .then(res => res.json())
+      .then(data => setExames(data))
+      .catch(err => console.error("Erro ao buscar exames:", err));
   }, []);
 
   return (
@@ -30,18 +29,43 @@ export default function Exame() {
             <p className="text-blue-400 font-semibold mb-4 bg-blue-100 p-1 rounded">
               Nenhum exame cadastrado.
             </p>
-            <button
-              className="bg-blue-400 text-white font-bold py-2 px-1 rounded hover:bg-blue-500 transition"
+            <Botao
+              texto="Cadastrar Primeiro Exame"
               onClick={() => navigate("/editar/exames")}
-            >
-              Cadastrar Primeiro Exame
-            </button>
+            />
           </div>
         ) : (
           <div className="flex flex-col items-center w-full">
             <ul className="w-full mb-6">
-              {exames.map((e) => (
-                <ExameProps key={e.id} exame={e} />
+              {exames.map((exame) => (
+                <li
+                  key={exame.idExame}
+                  className="flex justify-between items-center bg-blue-100 p-4 rounded mb-3 shadow hover:shadow-md transition-shadow"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-gray-700 flex-wrap">
+                    <span>
+                      <strong>Data:</strong> {exame.data.split("-").reverse().join("/")}
+                    </span>
+                    <span>
+                      <strong>Hora:</strong> {exame.hora.substring(0, 5)}
+                    </span>
+                    <span>
+                      <strong>Status:</strong> {exame.status}
+                    </span>
+                    <span>
+                      <strong>Tipo:</strong> {exame.tipoExame}
+                    </span>
+                    <span>
+                      <strong>Local:</strong> {exame.local}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => navigate(`/editar/exames/${exame.idExame}`)}
+                    className="bg-blue-400 text-white font-bold py-2 px-2 rounded hover:bg-blue-500 transition"
+                  >
+                    Editar
+                  </button>
+                </li>
               ))}
             </ul>
 
