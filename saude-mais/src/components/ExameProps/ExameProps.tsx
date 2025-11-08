@@ -21,14 +21,14 @@ export default function ExameProps({ exame }: Props) {
           <strong>Status:</strong> {exame.status}
         </span>
         <span>
-          <strong>Tipo:</strong> {exame.tipo}
+          <strong>Tipo:</strong> {exame.tipoExame}
         </span>
         <span>
           <strong>Local:</strong> {exame.local}
         </span>
       </div>
       <button
-        onClick={() => navigate(`/editar/exames/${exame.id}`)}
+        onClick={() => navigate(`/editar/exames/${exame.idExame}`)}
         className="bg-blue-400 text-white font-bold py-2 px-3 rounded hover:bg-blue-500 transition"
       >
         Editar
