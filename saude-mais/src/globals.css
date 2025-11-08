@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+:root {
+  scroll-behavior: smooth;
+}
+
+/* Garantir que html e body ocupem toda a tela */
+html, body, #root {
+  @apply min-w-full min-h-full;
+}
+
+.container {
+  @apply flex flex-col min-h-screen min-w-screen; 
+}
+
+header {
+  @apply h-[15vh] min-w-full
+  flex items-center justify-center;
+}
+
+footer {
+  @apply h-[10vh] w-full bg-blue-300 text-white;
+}
+
+main {
+  @apply flex flex-col items-center justify-center flex-1 w-full overflow-auto;
+}
