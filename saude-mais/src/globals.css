@@ -1,20 +1,27 @@
 @import "tailwindcss";
 
-:root {scroll-behavior: smooth;}
+:root {
+  scroll-behavior: smooth;
+}
 
-.container{
-    @apply w-[100vw] h-[100vh] flex flex-col justify-between;
+/* Garantir que html e body ocupem toda a tela */
+html, body, #root {
+  @apply min-w-full min-h-full;
+}
 
-    & header{
-        @apply h-[10vh] w-[100vw];
+.container {
+  @apply flex flex-col min-h-screen min-w-screen; 
+}
 
-        & a:hover{
-            @apply bg-blue-500;
-        }
-    }
+header {
+  @apply h-[15vh] min-w-full
+  flex items-center justify-center;
+}
 
-    & footer{
-        @apply bg-blue-300 text-white h-[10vh] w-[100vw];
-    }
+footer {
+  @apply h-[10vh] w-full bg-blue-300 text-white;
+}
 
+main {
+  @apply flex flex-col items-center justify-center flex-1 w-full overflow-auto;
 }

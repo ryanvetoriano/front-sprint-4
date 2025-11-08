@@ -4,37 +4,33 @@ import type { User } from "../../types/tipouser";
 import { useEffect } from "react";
 
 export default function Login() {
+  const URL_API = "https://java-sprint-4-latest.onrender.com/paciente";
+  const navigate = useNavigate();
 
   useEffect(() => {
-      document.title = "Login";
-    }, []);
-    
+    document.title = "Login";
+  }, []);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<User>();
-  const navigate = useNavigate();
 
   const onSubmit = async (data: User) => {
     try {
-      console.log("Dados enviados:", data);
-
-      // Busca usuário pelo CPF
-      const res = await fetch(`http://localhost:3001/users?cpf=${data.cpf}`);
-
+      const res = await fetch(`${URL_API}?cpf=${data.cpf}`);
       if (!res.ok) throw new Error("Erro na resposta da API");
 
-      const users: User[] = await res.json();
-      console.log("Usuários encontrados:", users);
-
-      if (users.length === 0) {
+      const pacientes: User[] = await res.json();
+      if (pacientes.length === 0) {
         alert("CPF não encontrado!");
         return;
       }
 
-      const user = users[0];
-      localStorage.setItem("usuarioId", String(user.id));
+      const paciente = pacientes[0];
+      localStorage.setItem("cpfUsuario", paciente.cpf);
+      localStorage.setItem("idPaciente", paciente.idPaciente.toString());
 
       navigate("/home");
     } catch (error) {
@@ -52,7 +48,6 @@ export default function Login() {
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-4 w-full max-w-md"
         >
-          {/* CPF */}
           <label className="flex flex-col text-blue-300 font-bold">
             CPF:
             <input
@@ -71,7 +66,6 @@ export default function Login() {
             )}
           </label>
 
-          {/* Botão login */}
           <button
             type="submit"
             className="bg-blue-400 text-white font-bold py-2 rounded hover:bg-blue-500 transition"
@@ -80,7 +74,6 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Ir para cadastro */}
         <button
           onClick={() => navigate("/register")}
           className="mt-4 text-blue-400 hover:underline"

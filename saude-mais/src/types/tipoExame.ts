@@ -1,8 +1,12 @@
 export type Exame = {
-  id?: number;
+  idExame?: number;
   data: string;
   hora: string;
   status: string;
-  tipo: string;
+  tipoExame: string;
   local: string;
-}
+  paciente?: {
+    idPaciente: number;
+    nome?: string;
+  };
+};

@@ -3,28 +3,41 @@ import { useNavigate } from "react-router-dom";
 import type { User } from "../../types/tipouser";
 
 export default function Paciente() {
-
-  useEffect(() => {
-    document.title = "Perfil";
-  }, []);
-
   const [user, setUser] = useState<User | null>(null);
   const [editMode, setEditMode] = useState(false);
   const [form, setForm] = useState<Partial<User>>({});
   const navigate = useNavigate();
 
+  // Função para formatar a data para dd/mm/yyyy
+  const formatDateBR = (dateString: string) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   useEffect(() => {
-    const usuarioId = localStorage.getItem("usuarioId");
-    if (!usuarioId) {
+    document.title = "Perfil";
+
+    const cpfUsuario = localStorage.getItem("cpfUsuario");
+    if (!cpfUsuario) {
       navigate("/");
       return;
     }
 
-    fetch(`http://localhost:3001/users/${usuarioId}`)
+    // Busca paciente pelo CPF
+    fetch(`https://java-sprint-4-latest.onrender.com/paciente?cpf=${cpfUsuario}`)
       .then((res) => res.json())
-      .then((data) => {
-        setUser(data);
-        setForm(data);
+      .then((data: User[]) => {
+        if (data.length === 0) {
+          alert("Paciente não encontrado!");
+          navigate("/");
+          return;
+        }
+        setUser(data[0]);
+        setForm(data[0]);
       })
       .catch((err) => console.error(err));
   }, [navigate]);
@@ -35,11 +48,12 @@ export default function Paciente() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Atualizar informações do paciente via CPF
   const handleUpdate = async () => {
     if (!user) return;
 
     try {
-      const res = await fetch(`http://localhost:3001/users/${user.id}`, {
+      const res = await fetch(`https://java-sprint-4-latest.onrender.com/paciente/${user.cpf}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -57,11 +71,34 @@ export default function Paciente() {
     }
   };
 
-  if (!user) return <p className="text-center mt-10 text-gray-600">Carregando...</p>;
+  // Deletar conta do paciente via CPF
+  const handleDelete = async () => {
+    if (!user) return;
+
+    if (!window.confirm("Tem certeza que deseja deletar sua conta?")) return;
+
+    try {
+      const res = await fetch(`https://java-sprint-4-latest.onrender.com/paciente/${user.cpf}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Erro ao deletar usuário");
+
+      alert("Conta deletada com sucesso!");
+      localStorage.removeItem("cpfUsuario");
+      navigate("/"); // volta para login
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao deletar a conta");
+    }
+  };
+
+  if (!user)
+    return <p className="text-center mt-10 text-gray-600">Carregando...</p>;
 
   return (
     <main className="bg-blue-200 h-full w-[100vw] flex justify-center items-center">
-      <section className="bg-gray-50 p-8 rounded-lg shadow-md w-full max-w-md">
+      <section className="bg-gray-50 p-8 rounded-lg shadow-md w-[90vw] max-w-md">
         <h1 className="text-2xl font-bold text-blue-300 mb-6 text-center">
           Perfil do Paciente
         </h1>
@@ -69,8 +106,8 @@ export default function Paciente() {
         {editMode ? (
           <div className="flex flex-col gap-4">
             <input
-              name="name"
-              value={form.name || ""}
+              name="nome"
+              value={form.nome || ""}
               onChange={handleChange}
               placeholder="Nome"
               className="p-2 border border-gray-300 rounded"
@@ -84,14 +121,14 @@ export default function Paciente() {
             />
             <input
               type="date"
-              name="birthDate"
-              value={form.birthDate || ""}
+              name="dataNascimento"
+              value={form.dataNascimento ? form.dataNascimento.split("T")[0] : ""}
               onChange={handleChange}
               className="p-2 border border-gray-300 rounded"
             />
             <select
-              name="gender"
-              value={form.gender || ""}
+              name="sexo"
+              value={form.sexo || ""}
               onChange={handleChange}
               className="p-2 border border-gray-300 rounded"
             >
@@ -101,8 +138,8 @@ export default function Paciente() {
               <option value="Outro">Outro</option>
             </select>
             <input
-              name="phone"
-              value={form.phone || ""}
+              name="telefone"
+              value={form.telefone || ""}
               onChange={handleChange}
               placeholder="Telefone"
               className="p-2 border border-gray-300 rounded"
@@ -124,17 +161,25 @@ export default function Paciente() {
           </div>
         ) : (
           <div className="flex flex-col gap-3 text-gray-700">
-            <p><strong>Nome:</strong> {user.name}</p>
+            <p><strong>Nome:</strong> {user.nome}</p>
             <p><strong>CPF:</strong> {user.cpf}</p>
-            <p><strong>Data de Nascimento:</strong> {user.birthDate}</p>
-            <p><strong>Gênero:</strong> {user.gender}</p>
-            <p><strong>Telefone:</strong> {user.phone}</p>
-            <button
-              onClick={() => setEditMode(true)}
-              className="mt-4 bg-blue-400 text-white font-bold py-2 rounded hover:bg-blue-500 transition"
-            >
-              Editar Informações
-            </button>
+            <p><strong>Data de Nascimento:</strong> {formatDateBR(user.dataNascimento)}</p>
+            <p><strong>Sexo:</strong> {user.sexo}</p>
+            <p><strong>Telefone:</strong> {user.telefone}</p>
+            <div className="flex gap-4 mt-4">
+              <button
+                onClick={() => setEditMode(true)}
+                className="flex-1 bg-blue-400 text-white font-bold py-2 rounded hover:bg-blue-500 transition"
+              >
+                Editar Informações
+              </button>
+              <button
+                onClick={handleDelete}
+                className="flex-1 bg-red-500 text-white font-bold py-2 rounded hover:bg-red-600 transition"
+              >
+                Deletar Conta
+              </button>
+            </div>
           </div>
         )}
       </section>
